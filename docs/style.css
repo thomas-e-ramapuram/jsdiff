@@ -33,14 +33,15 @@ h1 {
 	font-size: 100%;
 }
 del {
-	text-decoration: none;
-	color: #b30000;
-	background: #fadad7;
+	text-decoration: line-through;
+        color: #b30000;
+        background: #f98892;
 }
+
 ins {
-	background: #eaf2c2;
-	color: #406619;
-	text-decoration: none;
+        background: #6df142;
+        color: #406619;
+        text-decoration: underline;
 }
 
 #result {
