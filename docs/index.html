@@ -1,90 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Diff</title>
-	<link rel="stylesheet" href="style.css"/>
+    <meta charset="utf-8">
+    <title>Diff</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
 <div id="settings">
-	<h1>Diff</h1>
-	<label><input type="radio" name="diff_type" value="diffChars" checked> Chars</label>
-	<label><input type="radio" name="diff_type" value="diffWords"> Words</label>
-	<label><input type="radio" name="diff_type" value="diffLines"> Lines</label>
+    <h1>Diff</h1>
+    <label><input type="radio" name="diff_type" value="diffChars" checked> Chars</label>
+    <label><input type="radio" name="diff_type" value="diffWords"> Words</label>
+    <label><input type="radio" name="diff_type" value="diffLines"> Lines</label>
 </div>
 
 <table>
-	<tr>
-		<td contenteditable="true" id="a">restaurant</td>
-		<td contenteditable="true" id="b">aura</td>
-		<td><pre id="result"></pre></td>
-	</tr>
+    <tr>
+        <td rowspan="3" contenteditable="true" id="a">restaurant</td>
+        <td contenteditable="true" id="b">aura</td>
+        <td><pre id="result"></pre></td>
+    </tr>
+    <tr>
+        <td contenteditable="true" id="b1">aura</td>
+        <td><pre id="result1"></pre></td>
+    </tr>
+    <tr>
+        <td contenteditable="true" id="b2">aura</td>
+        <td><pre id="result2"></pre></td>
+    </tr>
 </table>
 
 <script src="diff.js"></script>
 <script defer>
 var a = document.getElementById('a');
 var b = document.getElementById('b');
+var b1 = document.getElementById('b1');
+var b2 = document.getElementById('b2');
 var result = document.getElementById('result');
+var result1 = document.getElementById('result1');
+var result2 = document.getElementById('result2');
 
-function changed() {
-	//a.textContent = a.textContent.toLowerCase().replace(/\s/g, '')
-	//b.textContent = b.textContent.toLowerCase().replace(/\s/g, '')
-	a.textContent = a.textContent.toLowerCase();
-	b.textContent = b.textContent.toLowerCase();
-	var diff = JsDiff[window.diffType](a.textContent, b.textContent);
-	var fragment = document.createDocumentFragment();
-	for (var i=0; i < diff.length; i++) {
+function changed(sourceElement, resultElement) {
+    var a = document.getElementById('a');
+    var diffType = window.diffType || 'diffChars'; // Default to diffChars if no type selected
 
-		if (diff[i].added && diff[i + 1] && diff[i + 1].removed) {
-			var swap = diff[i];
-			diff[i] = diff[i + 1];
-			diff[i + 1] = swap;
-		}
+    a.textContent = a.textContent.toLowerCase();
+    sourceElement.textContent = sourceElement.textContent.toLowerCase();
 
-		var node;
-		if (diff[i].removed) {
-			node = document.createElement('del');
-			node.appendChild(document.createTextNode(diff[i].value));
-		} else if (diff[i].added) {
-			node = document.createElement('ins');
-			node.appendChild(document.createTextNode(diff[i].value));
-		} else {
-			node = document.createTextNode(diff[i].value);
-		}
-		fragment.appendChild(node);
-	}
+    var diff = JsDiff[diffType](a.textContent, sourceElement.textContent);
+    var fragment = document.createDocumentFragment();
 
-	result.textContent = '';
-	result.appendChild(fragment);
+    for (var i = 0; i < diff.length; i++) {
+        if (diff[i].added && diff[i + 1] && diff[i + 1].removed) {
+            var swap = diff[i];
+            diff[i] = diff[i + 1];
+            diff[i + 1] = swap;
+        }
+
+        var node;
+        if (diff[i].removed) {
+            node = document.createElement('del');
+            node.appendChild(document.createTextNode(diff[i].value));
+        } else if (diff[i].added) {
+            node = document.createElement('ins');
+            node.appendChild(document.createTextNode(diff[i].value));
+        } else {
+            node = document.createTextNode(diff[i].value);
+        }
+        fragment.appendChild(node);
+    }
+
+    resultElement.textContent = '';
+    resultElement.appendChild(fragment);
 }
 
-window.onload = function() {
-	onDiffTypeChange(document.querySelector('#settings [name="diff_type"]:checked'));
-	changed();
+window.onload = function () {
+    onDiffTypeChange(document.querySelector('#settings [name="diff_type"]:checked'));
+    changed(b, result);
+    changed(b1, result1);
+    changed(b2, result2);
 };
 
-a.onpaste = a.onchange =
-b.onpaste = b.onchange = changed;
+a.addEventListener('input', function() {
+    changed(b, result);
+    changed(b1, result1);
+    changed(b2, result2);
+})
 
-if ('oninput' in a) {
-	a.oninput = b.oninput = changed;
-} else {
-	a.onkeyup = b.onkeyup = changed;
-}
+b.addEventListener('input', function () {
+    changed(b, result);
+});
+
+b1.addEventListener('input', function () {
+    changed(b1, result1);
+});
+
+b2.addEventListener('input', function () {
+    changed(b2, result2);
+});
 
 function onDiffTypeChange(radio) {
-	window.diffType = radio.value;
-	document.title = "Diff " + radio.value.slice(4);
+    window.diffType = radio.value;
+    document.title = "Diff " + radio.value.slice(4);
 }
 
 var radio = document.getElementsByName('diff_type');
 for (var i = 0; i < radio.length; i++) {
-	radio[i].onchange = function(e) {
-		onDiffTypeChange(e.target);
-		changed();
-	}
+    radio[i].onchange = function(e) {
+        onDiffTypeChange(e.target);
+        changed(b, result);
+        changed(b1, result1);
+        changed(b2, result2);
+    }
 }
 </script>
 </body>
