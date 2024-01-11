@@ -47,6 +47,9 @@ ins {
 #result, #result1, #result2 {
 	white-space: pre-wrap;
 }
+#result, #result1, #result2, #b, #b1, #b2 {
+	border: 2px solid black;
+}
 
 #settings {
 	position: absolute;
