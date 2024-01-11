@@ -44,7 +44,7 @@ ins {
         text-decoration: underline;
 }
 
-#result {
+#result, #result1, #result2 {
 	white-space: pre-wrap;
 }
 
