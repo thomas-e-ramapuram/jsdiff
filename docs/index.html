@@ -44,10 +44,12 @@ function changed(sourceElement, resultElement) {
     var a = document.getElementById('a');
     var diffType = window.diffType || 'diffChars'; // Default to diffChars if no type selected
 
-    a.textContent = a.textContent.toLocaleLowerCase();
-    sourceElement.textContent = sourceElement.textContent.toLocaleLowerCase();
+    var aText = a.textContent.toLowerCase();
+    var sourceText = sourceElement.textContent.toLowerCase();
+    // a.textContent = a.textContent.toLocaleLowerCase();
+    // sourceElement.textContent = sourceElement.textContent.toLocaleLowerCase();
 
-    var diff = JsDiff[diffType](a.textContent, sourceElement.textContent);
+    var diff = JsDiff[diffType](aText, sourceText);
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < diff.length; i++) {
