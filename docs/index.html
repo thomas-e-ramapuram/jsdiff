@@ -44,8 +44,8 @@ function changed(sourceElement, resultElement) {
     var a = document.getElementById('a');
     var diffType = window.diffType || 'diffChars'; // Default to diffChars if no type selected
 
-    a.textContent = a.textContent;
-    sourceElement.textContent = sourceElement.textContent;
+    a.textContent = a.textContent.toLocaleLowerCase();
+    sourceElement.textContent = sourceElement.textContent.toLocaleLowerCase();
 
     var diff = JsDiff[diffType](a.textContent, sourceElement.textContent);
     var fragment = document.createDocumentFragment();
